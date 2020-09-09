@@ -1,0 +1,118 @@
+---
+title: "Nightmares Vignette"
+author: "Rafael Hernandez Guzman"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Nightmares Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+- [Introduction](#intro)
+- [How to install](#install)
+- [Data preparation](#data)
+- [Suggested References](#ref)
+
+
+
+## Introduction {#intro}
+
+[`nightmares`](http://hydro-geomatic-lab.com/) provide common functions used in remote sensing analysis (e.g., conversion from digital numbers to radiance, reflectance, and temperature). It includes several algorithms to calculate the albedo: Liang (2000), Silva et al. (2016), Tasumi et al. (2008), among others. The tasseled cap transformation is made according to Baig et al., (2014). Although the current version implements basic functions, it will be expandable to a more robust tool for water cycle modeling (e.g., to include surface runoff and evapotranspiration calculations) in the near future.
+This package is under development at the [Hydro-Geomatic Lab](http://hydro-geomatic-lab.com/), Institute about Natural Resources Research (INIRENA) from the Universidad Michoacana de San Nicolás de Hidalgo.
+
+## How to install {#install}
+
+`Nightmares` package depends on other libraries to run (raster, sp, rgdal). Thus, to make available `Nightmares` in the R environment you must install the `raster`, `sp` and `rgdal` packages.
+
+## First time
+
+```{r}
+# Load the following libraries.
+library(raster)
+library(rgdal)
+library(sp)
+library(nightmares)
+```
+
+
+## Data preparation and calculation {#data}
+Each funtion have their own data requirements. If you go to the installed folder (Nightmare\extdata), you will find LANDSAT OLI BANDS, overall:
+    
+
+## Make a raster stack.  
+**library(raster)**  
+**# Define a working directory**  
+**setwd("C:/Users/Veirus/Desktop/nightmares")**  
+**bands <- stack(list.files("./Data",".tif",full.names=TRUE))**  
+   
+        
+## Convert Digital Numbers to TOA Radiance.
+This function Convert Digital Numbers (Landsat Level-1 data) to TOA Radiance using the radiance rescaling factors in the MTL file. It requires the stack of Landsat bands from the previous step.   
+
+**rad <- rad_oli(bands)**  
+**plot(rad)**  
+**# If you want to save the outputs**    
+**writeRaster(rad,"./Radiance.grd", format="raster")**  
+
+
+## Convert Digital Numbers to TOA Reflectance.  
+Reflective band DN’s are converted to TOA reflectance using the rescaling coefficients in the MTL file. This function requires the stack of Landsat bands and the sun elevation in degrees. You can find the SUN ELEVATION in the MLT file.  
+
+**ref <- ref_oli(bands, sun.elev = 67.97)**  
+**plot(ref)**  
+**# If you want to save the outputs**  
+**writeRaster(ref,"./Reflectance.grd", format="raster")**  
+ 
+ 
+## Convert Reflectance values to Albedo.  
+This function calculates the albedo values using different algorithms (e.g., Chemin, Liang, Olmedo, Silva, Tasumi). It requires the stack of Landsat bands from the previous step (reflectances). You must specify a method "Chemin, Liang, Olmedo, Silva, Tasumi".  
+
+**C <- alb_oli(bands, method= "Chemin")**  
+**plot(C)**  
+**# If you want to save the outputs**  
+**writeRaster(ref,"./Albedo_Chemin.grd", format="raster")**  
+
+
+## Convert Digital Numbers to Top of Atmosphere Brightness Temperature.  
+Thermal band data can be converted from spectral radiance to top of atmosphere brightness temperature using the thermal constants in the MTL file. This function requires a raster containing the Landsat OLI band 10 or 11. You must specify if your raster is the Landsat OLI band 10 or 11 as well as the desired units (Celsius, Kelvin, or Fahrenheit degrees).   
+
+**B10 <- raster("./Data/3047_20190517_B10.tif")**  
+**B11 <- raster("./Data/3047_20190517_B11.tif")**  
+**Celsius10 <- thermal_oli(B10, 10, "Celsius")**  
+**kelvin <- thermal_oli(B11, 11, "Kelvin")**  
+**far <- thermal_oli(B11, 11, "Fahrenheit")**  
+**plot(Celsius10)**  
+
+  
+## Convert Reclectance values to Brightness, Greenness and Wetness.  
+Tasselled Cap Transformation. This function requires a raster stack containing the reflectance values of first seven Landsat OLI bands. Outputs of this function include: Layer.1 - Brightness; Layer.2 - Greenness; Layer.3 - Wetness.  
+
+**tass <- tasscap_oli(ref)**  
+**plot(tass)**  
+  
+  
+DONE!!!  
+
+
+## Suggested References: {#ref}
+
+> [Baig et al., 2014. Derivation of a tasselled cap transformation based on Landsat 8 at-satellite reflectance. Remote Sensing Letters 5(5), 423-431.]
+
+> [Chemin Method, please see i.albedo function (GRASS). Only for OLI images.]
+
+> [Liang, S. 2000. Narrowband to broadband conversions of land surface albedo I: Algorithms. Remote Sensing of Environment, 76(2): 213-238.]
+
+> [Olmedo et al., 2016. water: Tools and functions to estimate actual evapotranspiration Using land surface energy balance models in R. The R journal, 8(2), 352-369.]
+
+> [Silva et al., 2016. Procedures for calculation of the albedo with OLI-Landsat 8 images: Application to the Brazilian semi-arid. Revista Brasileira de Engenharia Agrícola e Ambiental, 20(1), 3-8.]
+
+> [Tasumi et al., 2008. At-Surface Reflectance and Albedo from Satellite for Operational Calculation of Land Surface Energy Balance. Journal of Hydrologic Engineering, 13, 51-63.]  
+
