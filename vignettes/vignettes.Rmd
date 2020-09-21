@@ -18,7 +18,11 @@ knitr::opts_chunk$set(
 
 - [Introduction](#intro)
 - [How to install](#install)
-- [Data preparation](#data)
+- [First time](#first)
+- [Data preparation and calculation](#data)
+- [Tasselled Cap Transformation](#tasscap)
+- [Derived Spectral Indices](#DSI)
+- [Reference Evapotranspiration](#ETO)
 - [Suggested References](#ref)
 
 
@@ -32,7 +36,7 @@ This package is under development at the [Hydro-Geomatic Lab](http://hydro-geoma
 
 `Nightmares` package depends on other libraries to run (raster, sp, rgdal). Thus, to make available `Nightmares` in the R environment you must install the `raster`, `sp` and `rgdal` packages.
 
-## First time
+## First time {#first}
 
 ```{r}
 # Load the following libraries.
@@ -47,7 +51,7 @@ library(nightmares)
 Each funtion have their own data requirements. If you go to the installed folder (Nightmare\extdata), you will find LANDSAT OLI BANDS, overall:
     
 
-## Make a raster stack.  
+### Make a raster stack.  
 **library(raster)**  
 **# Define a working directory**  
 **setwd("C:/Users/Veirus/Desktop/nightmares")**  
@@ -92,17 +96,57 @@ Thermal band data can be converted from spectral radiance to top of atmosphere b
 **plot(Celsius10)**  
 
   
-## Convert Reclectance values to Brightness, Greenness and Wetness.  
+## Convert Reclectance values to Brightness, Greenness and Wetness.  {#tasscap}
 Tasselled Cap Transformation. This function requires a raster stack containing the reflectance values of first seven Landsat OLI bands. Outputs of this function include: Layer.1 - Brightness; Layer.2 - Greenness; Layer.3 - Wetness.  
 
 **tass <- tasscap_oli(ref)**  
+**names(tass) <- c('Brightness', 'Greenness', 'Wetness')**  
 **plot(tass)**  
   
   
-DONE!!!  
+##  Landsat Surface Reflectance Derived Spectral Indices {#DSI}
+This function requires Landsat Surface Reflectance from Landsat 8 Operational Land Imager to derive spectral indices. The spectral indices with Landsat 8 derived with this function are:  
+layer.1: Normalized Difference Vegetation Index (NDVI);  
+layer.2: Enhanced Vegetation Index (EVI);  
+layer.3: Soil Adjusted Vegetation Index (SAVI);  
+layer.4: Modified Soil Adjusted Vegetation Index (MSAVI);  
+layer.5: Normalized Difference Moisture Index (NDMI);  
+layer.6: Normalized Burn Ratio (NBR);  
+layer.7: Normalized Burn Ratio 2 (NBR2);  
+Layer.8: Advanced Vegetation Index (AVI);  
+Layer.9: Bare Soil Index (BSI);  
+  
+**indices <- dsi_oli(ref)**  
+**names(indices) <- c('NDVI', 'EVI', 'SAVI', 'MSAVI', 'NDMI', 'NBR', 'NBR2', 'AVI', 'BSI')**  
+**plot(indices)**   
+
+This function also offers the possibility to estimate individually many index (NDVI, EVVI, SAVI, MSAVI, NDMI, NBR, NBR2, NDWI, MNDWI, AVI, SI, BSI, LAI, among others).
+  
+## Determination of ETo with missing data {#ETO}
+This function is used to the estimation of monthly ETo with the FAO Penman-Montheith equation. The meteorological data, required to estimate ETo by means of the FAO Penman-Monteith equation, consist of air temperature, air humidity, wind speed and radiation. Where some of these data are missing or cannot be calculated, it is strongly recommended that the user estimate the missing climatic data. The ETo calculation procedure here is for a data set containing only maximum and minimum air temperature. It is based on the FAO Irrigation and drainage paper 56.
+
+**# Calculate the atmospheric pressure**  
+**# Specify the elevation above sea level in meters**  
+P <- atm_pressure(z= 1120)    
+print(paste("The atmospheric pressure =", P, "kPa"))    
+  
+    
+**# Calculate the solar radiation**  
+Rs <- solrad(kRs= 0.19, tmax= 25, tmin= 15, lat= 43.5, doy= 150)  
+print(paste("The solar radiation is", Rs, "MJ/sq.m/d"))  
+  
+    
+**# Calculate the reference evapotranspiration**  
+et0 <- ETo56_miss(lat= 45.72, z= 200, doy= 196, tmax= 26.6, tmin= 14.8, tdew= 14.8, u2= 2, Rs= 22.29, P= 98.96)  
+print(paste("Reference evapotranspiration =", et0, "mm/day"))  
+    
+    
+## DONE!!!  
 
 
 ## Suggested References: {#ref}
+
+> [Allen et al., 1998. Crop Evapotranspiration. Guidelines for computing crop water requirements. FAO Irrigation and drainage paper 56.]
 
 > [Baig et al., 2014. Derivation of a tasselled cap transformation based on Landsat 8 at-satellite reflectance. Remote Sensing Letters 5(5), 423-431.]
 

@@ -17,7 +17,7 @@
 #' @references
 #' Chemin Method, please see i.albedo function (GRASS). Only for OLI images.
 #'
-#' Liang, S. 2000. Narrowband to broadband conversions of land surface albedo I: Algorithms. Remote Sensing of Environment, 76(2): 213-238.
+#' Liang, S. 2000. Narrowband to broadband conversions of land surface albedo I: Algorithms. Remote Sensing of Environment, 76(2), 213-238.
 #'
 #' Olmedo et al., 2016. water: Tools and functions to estimate actual evapotranspiration Using land surface energy balance models in R. The R journal, 8(2), 352-369.
 #'

@@ -15,12 +15,12 @@
 #' thermal_oli(B11, 11, "Fahrenheit")
 #'
 #' @references
-#' \url{https://www.usgs.gov/land-resources/nli/landsat/using-usgs-landsat-level-1-data-product}.
+#' \url{https://www.usgs.gov/core-science-systems/nli/landsat/using-usgs-landsat-level-1-data-product}.
 #' @export
 #' @import raster
 thermal_oli <- function (x, band = c(10, 11), units = c(Celsius, Kelvin, Fahrenheit)) {
   if (missing(band)) {
-    stop("Required data missing for BAND. Please, select between 10 or 11")
+    stop("Required data missing for BAND. Please, select the band 10 or 11")
   }
   if (missing(units)) {
     stop("Required data missing for UNITS. Please, select between Celsius, Kelvin or Fahrenheit")

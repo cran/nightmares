@@ -28,5 +28,5 @@ thermal_oli(B11, 11, "Fahrenheit")
 
 }
 \references{
-\url{https://www.usgs.gov/land-resources/nli/landsat/using-usgs-landsat-level-1-data-product}.
+\url{https://www.usgs.gov/core-science-systems/nli/landsat/using-usgs-landsat-level-1-data-product}.
 }

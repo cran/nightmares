@@ -1,0 +1,8 @@
+nightmares 0.0.2
+===========
+o  This version includes several spectral indices from Landsat OLI as well as reference evapotranspiration calculation using the FAO Penman-Montheith equation!
+
+
+nightmares 0.0.1
+===========
+o  This is the initial version of nighmares.  The main functions are Radiance, Reflectance, Albedo, Thermal and TassCap transformation.

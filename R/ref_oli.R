@@ -14,7 +14,7 @@
 #' ref_oli(x, sun.elev=67.97)
 #'
 #' @references
-#' \url{https://www.usgs.gov/land-resources/nli/landsat/using-usgs-landsat-level-1-data-product}.
+#' \url{https://www.usgs.gov/core-science-systems/nli/landsat/using-usgs-landsat-level-1-data-product}.
 #' @export
 #' @import raster
 ref_oli <- function (x, sun.elev) {
